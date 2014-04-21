@@ -5,6 +5,7 @@ import bencode
 import socket
 from random import choice
 from hashlib import sha1
+from message import WireMessage
 
 # Open torrent file
 torrent_file = open(sys.argv[1], "rb")
@@ -19,7 +20,7 @@ s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 host = socket.gethostname() # Get local machine name
 port = 42044                # 25159 - HE; Reserve a port for your service.
 
-s.connect(("kate-english", 25159))
+s.connect(("kate-english", 25159))#"bl-tardis", 42044))   #"kate-english", 25159))
 # print "connected to " + host
 
 # Handshake
@@ -32,11 +33,27 @@ protocol_id = 'BitTorrent protocol'
 # len_id = str(len(protocol_id))
 reserved = '\x00'*7 + '\x01'
 handshake = '\x13' + protocol_id + reserved + info_hash + peer_id
-print len(handshake)
+
 print handshake
 s.send(handshake)
 data = s.recv(len(handshake))
 print data
-print len(data)
+
+buf = ""
+# while True:
+# 	try:
+msg = s.recv(4096)
+# 	except Exception, e:
+# 		break
+# 	else:
+# 		if len(msg) == 0: break
+buf += msg
+
+print msg		
+# if len(buf) == 0: return False
+#messages = WireMessage.decode_all(buf)
+print WireMessage.decode(msg)
+
+
 s.close()
 # end handshake and begin asking for pieces
