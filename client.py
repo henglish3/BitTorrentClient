@@ -20,7 +20,7 @@ s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 host = socket.gethostname() # Get local machine name
 port = 42044                # 25159 - HE; Reserve a port for your service.
 
-s.connect(("kate-english", 25159))#"bl-tardis", 42044))   #"kate-english", 25159))
+s.connect(("128.61.23.192", 42044))#"bl-tardis", 42044))   #"kate-english", 25159))
 # print "connected to " + host
 
 # Handshake
@@ -40,19 +40,26 @@ data = s.recv(len(handshake))
 print data
 
 buf = ""
-# while True:
-# 	try:
-msg = s.recv(4096)
-# 	except Exception, e:
-# 		break
-# 	else:
-# 		if len(msg) == 0: break
-buf += msg
+loop = 1
+while True:
+	try:
+		print loop
+		msg = s.recv(4096)
+# 		print WireMessage.decode(msg)
+	except Exception, e:
+		break
+	else:
+		if len(msg) == 0: break
+		buf += msg
+		print "buf" + buf
+		loop += 1
 
-print msg		
+print "EXIT"		
 # if len(buf) == 0: return False
-#messages = WireMessage.decode_all(buf)
-print WireMessage.decode(msg)
+# print WireMessage.decode_all(buf)
+print WireMessage.decode(buf)
+
+
 
 
 s.close()
