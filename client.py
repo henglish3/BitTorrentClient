@@ -27,7 +27,7 @@ s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 host = socket.gethostname() # Get local machine name
 port = 42044                # 25159 - HE; Reserve a port for your service.
 
-s.connect(("128.61.66.128", 25159)) #"bl-tardis", 42044))   #"kate-english", 25159))
+s.connect(("128.61.19.42", 42044)) #"bl-tardis", 42044))   #"kate-english", 25159))
 # print "connected to " + host
 
 # Handshake
