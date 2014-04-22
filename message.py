@@ -68,11 +68,13 @@ class WireMessage(object):
             return (cls.MESSAGE_TYPES[-1], None), buf
         except AssertionError:
             pass
-
+		
+        
         # First 5 bytes are always <4:total_message_length><1:msg_id>
         total_message_length, msg_id = struct.unpack("!IB", buf[:5])
         # Advance buffer to payload
         buf = buf[5:]
+        print len(buf)
         # Calculate args and payload length
         fmt = '!' + cls.MESSAGE_TYPES[msg_id][1][3:] # Ignore length prefix
         args_and_payload_length = total_message_length - 1 # Discount msg_id byte
@@ -86,11 +88,14 @@ class WireMessage(object):
                 # Value of <4:length> does not include the 8 bytes in <4:index><4:begin>
                 payload_length -= 8
             fmt += str(payload_length) + "s" 
+        else:
+        	assert len(fmt) == 0
 
         args = None
         args = (x for x in struct.unpack(fmt, args_and_payload))
         # Advance buffer past payload
         buf = buf[args_and_payload_length:] 
+        	
         try:
             # Get func name by message id
             return (cls.MESSAGE_TYPES[msg_id][0], args), buf

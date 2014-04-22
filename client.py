@@ -3,6 +3,7 @@
 import sys, os, hashlib, StringIO
 import bencode
 import socket
+import struct
 from random import choice
 from hashlib import sha1
 from message import WireMessage
@@ -12,15 +13,13 @@ torrent_file = open(sys.argv[1], "rb")
 metainfo = bencode.bdecode(torrent_file.read())
 info = metainfo["info"]
 info_hash = hashlib.sha1(bencode.bencode(info)).digest() 
-print info_hash
-print len(info_hash)
 
-# s = socket.socket()         # Create a socket object
+#s = socket.socket()         # Create a socket object
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 host = socket.gethostname() # Get local machine name
 port = 42044                # 25159 - HE; Reserve a port for your service.
 
-s.connect(("128.61.23.192", 42044))#"bl-tardis", 42044))   #"kate-english", 25159))
+s.connect(("128.61.66.128", 25159)) #"bl-tardis", 42044))   #"kate-english", 25159))
 # print "connected to " + host
 
 # Handshake
@@ -34,33 +33,61 @@ protocol_id = 'BitTorrent protocol'
 reserved = '\x00'*7 + '\x01'
 handshake = '\x13' + protocol_id + reserved + info_hash + peer_id
 
-print handshake
+print 'Handshake info\n' + handshake
 s.send(handshake)
 data = s.recv(len(handshake))
 print data
+
 
 buf = ""
 loop = 1
 while True:
 	try:
-		print loop
-		msg = s.recv(4096)
-# 		print WireMessage.decode(msg)
+		#print loop
+		msg = s.recv(5)
+		total_message_length, msg_id = struct.unpack("!IB", msg[:5])
+		print msg_id
+		print '^    ' + WireMessage.MESSAGE_TYPES[msg_id][0]
+		print total_message_length
+		if msg_id == 9:
+			msg = s.recv(3)
+			print msg
+		if msg_id == 7:
+			msg = s.recv(total_message_length)
+		if msg_id == 5:
+			msg = s.recv(total_message_length)
+			#print total_message_length
+		if msg_id == 4:
+			msg = s.recv(total_message_length)
+			#print total_message_length
+		if msg_id == 0:
+			msg = s.recv(1)
+		if msg_id == -1: break
 	except Exception, e:
+		print sys.exc_info()[0]
 		break
 	else:
 		if len(msg) == 0: break
 		buf += msg
-		print "buf" + buf
 		loop += 1
+		
+#message = WireMessage.decode(msg)
+#id = message[0][0]
+#print message
+#print id
+#if id == 'have':
+	#s.send(WireMessage.construct_msg(2))
+#if id == 'keep_alive':
+ 	#keepAliveMessage = ""
+ 	#assert len(keepAliveMessage) == 0
+ 	#s.send(keepAliveMessage)
+#if id == 'port' or 'unchoke':
+ 	#s.send(WireMessage.construct_msg(6, {0,0,16384}))
 
 print "EXIT"		
 # if len(buf) == 0: return False
 # print WireMessage.decode_all(buf)
-print WireMessage.decode(buf)
-
-
-
+# print WireMessage.decode(buf)
 
 s.close()
 # end handshake and begin asking for pieces
