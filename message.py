@@ -74,7 +74,6 @@ class WireMessage(object):
         total_message_length, msg_id = struct.unpack("!IB", buf[:5])
         # Advance buffer to payload
         buf = buf[5:]
-        print len(buf)
         # Calculate args and payload length
         fmt = '!' + cls.MESSAGE_TYPES[msg_id][1][3:] # Ignore length prefix
         args_and_payload_length = total_message_length - 1 # Discount msg_id byte
@@ -88,8 +87,8 @@ class WireMessage(object):
                 # Value of <4:length> does not include the 8 bytes in <4:index><4:begin>
                 payload_length -= 8
             fmt += str(payload_length) + "s" 
-        else:
-        	assert len(fmt) == 0
+        #else:
+        	#assert len(fmt) == 0
 
         args = None
         args = (x for x in struct.unpack(fmt, args_and_payload))
