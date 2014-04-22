@@ -14,6 +14,12 @@ from request import Request
 torrent_file = open(sys.argv[1], "rb")
 metainfo = bencode.bdecode(torrent_file.read())
 info = metainfo["info"]
+piece_length = metainfo['info']['piece length']
+print piece_length
+pieces = metainfo['info']['pieces']
+pieces_hashes = list(Request._read_pieces_hashes(pieces))
+num_pieces = len(pieces_hashes)
+print num_pieces
 info_hash = hashlib.sha1(bencode.bencode(info)).digest() 
 
 #s = socket.socket()         # Create a socket object
@@ -68,8 +74,6 @@ while True:
 				print "buffer length in loop: " + str(len(buf))
 		buf1 = buf[:total_message_length + 4]
 		buf = buf[(total_message_length + 4):]
-		#message =  WireMessage.decode(buf1)
-		#print message
 		Request.message_handle(buf1, s)
 	except Exception, e:
 		print sys.exc_info()[0]

@@ -13,13 +13,20 @@ class Request(object):
 			s.send(WireMessage.construct_msg(2))
 			return True
 		if message[0][0] == 'unchoke':
-			print 'unchoked!!'
+			print 'unchoked!! Time to request!'
 			s.send(WireMessage.construct_msg(6, 0, 0, 16384))
 			return True
 		if message[0][0] == 'piece':
-			print 'PIECE!!!'
+			print 'PIECE!!! maybe...'
+			#s.send(WireMessage.construct_msg(6, 
+			#blocks = 
 			return True
 		if message[0][0] == 'keep_alive':
 			s.send('\x00')
 			return True
 		return False
+
+	@classmethod
+	def _read_pieces_hashes(cls, pieces):
+		for i in range(0, len(pieces), 20):
+			yield pieces[i:i+20]
