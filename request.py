@@ -6,6 +6,10 @@ import time
 from message import WireMessage
 from hashlib import sha1
 
+''' Authors: Harrison English, Brenden Leonard
+	Bencode Library credit: Bram Cohen			(Read PKG-INFO file)
+'''
+
 class Request(object):
 	i = 0
 	end = 0

@@ -1,6 +1,10 @@
 import struct
 import binascii
 
+''' Authors: Harrison English, Brenden Leonard
+	Bencode Library credit: Bram Cohen			(Read PKG-INFO file)
+'''
+
 class WireMessage(object):
     PL = '!IB' # "Prefix Length" (req'd by protocol)
     MESSAGE_TYPES = {
