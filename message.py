@@ -21,7 +21,7 @@ class WireMessage(object):
     def decode(cls, buf, pstr='BitTorrent protocol'):
         
         if len(buf) < 4:
-            raise Exception("Not enough bytes to form a protocol message.")
+            raise Exception('Not enough bytes to form a protocol message.')
 
         # Check for Keep Alive message
         try:
